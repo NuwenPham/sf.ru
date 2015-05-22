@@ -44,6 +44,7 @@
             }
         }
 
+
         OrderButtonStatus(true);
         this._lastBattleData = _actuallyBattleData;
 		//this.LoadBattleData( _actuallyBattleData );
