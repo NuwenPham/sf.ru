@@ -1,0 +1,192 @@
+
+
+#layout{
+	width:100%;
+	height:100%;
+}
+
+
+#container{
+	width:900px;
+	min-height:400px;
+}
+
+#menu{
+	width:900px;
+	height:33px;
+}
+
+
+#content{
+	width:900px;
+	min-height:400px;
+	background:rgba(10,20,40,0.5);
+}
+
+
+
+.mp_menu{
+	color:#fff;
+	text-decoration:none;
+	width:900px;
+	height:60px;
+	font-family:Arial, Helvetica, sans-serif;
+	padding:0px;
+}
+
+.mp_menu li{
+	position:relative;
+	display:inline-block;
+	padding:  7px 25px ;
+	background:rgba(255,255,255,0.3);
+	border-radius: 3px;
+	cursor:pointer;
+	
+	
+	border-top-left-radius: 55px;
+	border-top-right-radius: 55px;
+	
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 25px;
+		
+}
+
+.mp_menu li:hover{
+	background:rgba(255,255,255,0.5);
+}
+
+
+
+.cnt_header{
+	width:900px;
+	height:60px;
+}
+
+.game_button{
+	font-family:Arial, Helvetica, sans-serif;
+	padding:  7px 25px ;
+	background:rgba(255,255,255,0.3);
+	border-bottom-left-radius: 233px;
+	border-top-right-radius: 233px;
+	border-top-left-radius: 25px;
+	border-bottom-right-radius: 25px;
+	cursor:pointer;
+	display:inline-block;
+	position:relative;
+	left:5px;
+	top:5px;
+	color:#FFFFFF;
+	font-weight:bold;
+}
+.game_button:hover{
+	background:rgba(255,255,255,0.5);
+}
+
+
+.battle_settings{
+	width:200px;
+	height:110px;
+	border-radius:5px;
+	background:rgba(255,255,255,0.1);
+	border: 1px solid rgba(255,255,255,0.9);
+	position:relative;
+}
+
+#droplist{
+	background:rgba(255,255,255,0.5);
+	border-radius:5px;
+	position:relative;
+}
+
+#droplist option{
+	background:rgba(255,255,255,0.5);
+	border-radius:5px;
+}
+
+.button_close{
+	background:rgba(255,0,0,0.8);
+	border-radius:5px;
+	width: 30px;
+	height: 20px;
+	position:relative;
+	cursor:pointer;
+}
+
+.button_close:hover{
+	background:rgba(155,0,50,1);
+}
+
+
+.create_button{
+	font-family:Arial, Helvetica, sans-serif;
+	padding:  3px 10px ;
+	background:rgba(255,255,255,0.4);
+	border-radius: 7px;
+	cursor:pointer;
+	display:inline-block;
+	position:relative;
+	top:15px;
+	color:#222;
+	font-weight:bold;
+	border: 2px solid #fff;
+}
+
+.create_button:hover{
+	background:rgba(255,255,255,0.8);
+}
+
+
+
+
+#gmp_battle_lobbys{
+	margin-left: 5px; margin-right: 5px;
+	background:rgba(255,255,255,0.1); color: #fff;
+	height:100%;
+	
+}
+
+.gmp_battle_lobby_table{
+	font-size:0px;
+	height:40px;
+	margin:3px;
+	border-bottom: 1px solid rgba(255,255,255, 0.5);
+	vertical-align:top;
+}
+
+.gmp_battle_lobby_table:hover{
+	border-bottom: 1px solid rgba(255,255,255, 0.5);
+	background: rgba(255,255,255, 0.2);
+}
+
+
+.gmp_battle_lobby_table div{
+	vertical-align:top;
+	position:relative;
+	height: 40px;
+	font-size:15px; 
+	color:#FFFFFF;
+	display: inline-block;
+	background: rgba(50,255,50, 0.1);
+	padding-left:5px;
+	border-left: 1px solid rgb(150,150,150);
+	border-right: 1px solid rgb(185,185,185);
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+
+.gmp_battle_lobby_table div div{
+	display:block;
+	background: rgba(0,0,0,0);
+	border:0px;
+}	
+
+
+.gmp_cd_timer{
+	color:#fff;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	vertical-align:middle;
+	font-size:15px;
+	position:relative;
+	padding-right: 10px;
+	
+	
+}

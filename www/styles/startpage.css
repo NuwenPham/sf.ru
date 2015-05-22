@@ -1,0 +1,65 @@
+#login_button{
+	cursor:pointer;
+	width:90px;
+	height:90px;
+}
+
+.vk_img_reg{display:block}
+.vk_img_reg-hover{display:none}
+.vk_img_reg-active{display:none}
+
+#login_button:hover .vk_img_reg{
+	display:none
+}
+
+#login_button:hover .vk_img_reg-hover{
+	display:block
+}
+
+#login_button:active .vk_img_reg{
+	display:none
+}
+
+#login_button:active .vk_img_reg-hover{
+	display:none
+}
+
+#login_button:active .vk_img_reg-active{
+	display:block
+}
+
+
+
+
+#start_game_button{
+	cursor:pointer;
+	width:100px;
+	height:40px;
+	display:none;
+	left:-50%;
+	top:-50%;
+	position:relative;
+}
+
+#start_game_button:hover .vk_img_reg{
+	display:none
+}
+
+#start_game_button:hover .vk_img_reg-hover{
+	display:block
+}
+
+#start_game_button:active .vk_img_reg{
+	display:none
+}
+
+#start_game_button:active .vk_img_reg-hover{
+	display:none
+}
+
+#start_game_button:active .vk_img_reg-active{
+	display:block
+}
+
+
+

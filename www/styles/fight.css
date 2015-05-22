@@ -1,0 +1,78 @@
+#content{
+	margin:auto;
+}
+
+#fight{
+	background:rgba(255,255,255,0.01);
+	width: 1000px;
+	height: 400px;
+	position:relative;
+}
+
+
+#hide_navigation_bar{
+	height:0px;
+	position:relative; 
+	z-index:2;
+	top:130px;
+	left:-20px;
+	
+}
+
+
+.b_hnb_background{
+	position:relative;
+	width:200px;
+	height:150px;
+	background: rgba(255,255,255,0.9);
+	border-radius:5px;
+	display:none;
+
+}
+
+.bh_elements{
+	position:relative;
+	display:inline-block;
+	top: 8px;
+
+}
+
+.bh_doneorder_button_off{
+	padding: 5px 10px;
+	border: 2px #999 solid;
+	border-radius: 5px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #999;
+	
+}
+
+
+.bh_doneorder_button{
+	padding: 5px 10px;
+	border: 2px #666 solid;
+	border-radius: 5px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #666;
+	
+}
+
+.bh_doneorder_button:hover{
+	padding: 5px 10px;
+	border: 2px #888 solid;
+	border-radius: 5px;
+	background:#666;
+	color:#fff;
+	cursor:pointer;
+}
+
+.bh_doneorder_button:active{
+	background:#555;
+}
+
+.bh_doneorder_timer{
+	padding: 5px 10px;
+	border: 2px #666 solid;
+	border-radius: 5px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #444;
+}
