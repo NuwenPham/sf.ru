@@ -2,7 +2,7 @@
 class Router
 {
 	public function Route($PageName)
-	{		
+	{	$sdfsdf;	
 		$pageType = $this->GetPageType($PageName);
 		
 		if( $pageType == "404" )
