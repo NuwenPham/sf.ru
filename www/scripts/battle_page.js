@@ -4,6 +4,79 @@
 	this._lastBattleData = null;
 	this.isstepped = false;
 
+	this.UpdateBattle = function(_response){
+		battleField.withContext(function (_context){
+			var that = _context;
+			var lCurPosX, lCurPosY, lPlayers, lSideLeftRight, lSideTopBottom, lSideVertical, lPadding, lOffsetX, lOffsetY,
+				lShipPos, lClockTimer, lKey, lPlayer;
+
+			lSideLeftRight = 12;
+			lSideTopBottom = 30;
+			lSideVertical = 20;
+			lPadding = 4;
+			lOffsetX = 30;
+			lOffsetY = 40;
+
+			lPlayers = _response.players;
+			for (lKey in lPlayers) {
+				if(lPlayers[lKey])// != undefined )
+					if(lPlayers[lKey].player_id)// != undefined )
+						if(that.isShipByPlayerId(lPlayers[lKey].player_id))
+							continue;
+
+				// Here loading ships
+				lPlayer = lPlayers[lKey];
+				lCurPosX = lPlayer.pos_x * ((lSideLeftRight * 2) + lSideTopBottom + lPadding - lSideLeftRight) + lOffsetX;
+				lCurPosY = lPlayer.pos_y * ((lSideVertical * 2) + lPadding ) + lOffsetY + ( ( lPlayer.pos_x % 2 == 1 ) ? -(lSideVertical + (lPadding / 2)) : 0) - 10;
+
+				that.AddShip({
+					image: "../image/ships/default_ship/top_battle_2.png",
+					coords: {
+						x: lPlayer.pos_x * 1,
+						y: lPlayer.pos_y * 1
+					},
+					position: {
+						x: lCurPosX,
+						y: lCurPosY
+					},
+					player_id: lPlayer.player_id
+				});
+			}
+
+			var lYou = _response.you[1];
+			lShipPos = {
+				x: Math.abs(lYou.pos_x),
+				y: Math.abs(lYou.pos_y)
+			};
+
+			var lYouGuns = _response.your_guns;
+			for (lKey in lYouGuns) {
+				// laser
+				if(lYouGuns[lKey].gun_type == 0)
+					that.LightingArea(lShipPos, Math.abs(lYouGuns[lKey].gun_range), "/image/hex_selected_laser.png");
+
+				// plasma
+				if(lYouGuns[lKey].gun_type == 1)
+					that.LightingArea(lShipPos, Math.abs(lYouGuns[lKey].gun_range), "/image/hex_selected_plasma.png");
+			}
+
+			// Where you can go
+			that.LightingArea(lShipPos, 1, "/image/hex_selected.png");
+			var lPrxStatus = $.proxy(battle.GetStatusOfFight, battle);
+			lClockTimer = new ClockTimer();
+			lClockTimer.Start(
+				_response.battle[1].countdown,
+				function (_resp){
+					Starfight.UpdateGUITimer(".bh_doneorder_timer", _resp.clock)
+				}, // Обновление таймера
+				lPrxStatus // Конец хода. // С этого момента запрашивать состояние боя, пока не обновиться ход.
+			);
+			lPlayers = null;
+			lShipPos = null;
+			battle._lastBattleData = _response;
+		})
+	};
+
     this.GetStatusOfFight = function(){
         var lProxyMain, lPoxyInner;
 
@@ -24,7 +97,7 @@
     this.UpdateBattleField = function( _actuallyBattleData ){
         var lKey, lPlayer, lShipId;
 
-        battle.ClearLighting();
+		battleField.ClearLighting();
 
         if( Starfight.LastCreatedBattleMenu != null ){
             Starfight.LastCreatedBattleMenu.RemoveMenu( Starfight );
@@ -35,19 +108,20 @@
         lPlayer = _actuallyBattleData.players;
         for (lKey in lPlayer){
             lShipId = battleField.getShipIdFromPlayerId( lPlayer[lKey].player_id );
-            if( lPlayer[lKey].pos_x == Starfight.Ships[lShipId].coordinates.x && lPlayer[lKey].pos_y == Starfight.Ships[lShipId].coordinates.y){
+            if( lPlayer[lKey].pos_x == battleField.Ships[lShipId].coordinates.x && lPlayer[lKey].pos_y == battleField.Ships[lShipId].coordinates.y){
 
             } else {
+
 				battleField.MoveShip( lPlayer[lKey].player_id,  lPlayer[lKey].pos_x, lPlayer[lKey].pos_y );
 				battleField.Ships[lShipId].coordinates.x = lPlayer[lKey].pos_x;
 				battleField.Ships[lShipId].coordinates.y = lPlayer[lKey].pos_y;
+
             }
         }
 
-
+		this.UpdateBattle(_actuallyBattleData);
         OrderButtonStatus(true);
         this._lastBattleData = _actuallyBattleData;
-		//this.LoadBattleData( _actuallyBattleData );
     };
 
 	this.ActionsForShip = function(_cell){
@@ -402,76 +476,7 @@ function funcLoader(){
 	});
 
 	Starfight.api.LoadBattleData(5, function (_response){
-		battleField.withContext(function (_context){
-			var that = _context;
-			var lCurPosX, lCurPosY, lPlayers, lSideLeftRight, lSideTopBottom, lSideVertical, lPadding, lOffsetX, lOffsetY,
-				lShipPos, lClockTimer, lKey, lPlayer;
-
-			lSideLeftRight = 12;
-			lSideTopBottom = 30;
-			lSideVertical = 20;
-			lPadding = 4;
-			lOffsetX = 30;
-			lOffsetY = 40;
-
-			lPlayers = _response.players;
-			for (lKey in lPlayers) {
-				if(lPlayers[lKey])// != undefined )
-					if(lPlayers[lKey].player_id)// != undefined )
-						if(that.isShipByPlayerId(lPlayers[lKey].player_id))
-							continue;
-
-				// Here loading ships
-				lPlayer = lPlayers[lKey];
-				lCurPosX = lPlayer.pos_x * ((lSideLeftRight * 2) + lSideTopBottom + lPadding - lSideLeftRight) + lOffsetX;
-				lCurPosY = lPlayer.pos_y * ((lSideVertical * 2) + lPadding ) + lOffsetY + ( ( lPlayer.pos_x % 2 == 1 ) ? -(lSideVertical + (lPadding / 2)) : 0) - 10;
-
-				that.AddShip({
-					image: "../image/ships/default_ship/top_battle_2.png",
-					coords: {
-						x: lPlayer.pos_x * 1,
-						y: lPlayer.pos_y * 1
-					},
-					position: {
-						x: lCurPosX,
-						y: lCurPosY
-					},
-					player_id: lPlayer.player_id
-				});
-			}
-
-			var lYou = _response.you[1];
-			lShipPos = {
-				x: Math.abs(lYou.pos_x),
-				y: Math.abs(lYou.pos_y)
-			};
-
-			var lYouGuns = _response.your_guns;
-			for (lKey in lYouGuns) {
-				// laser
-				if(lYouGuns[lKey].gun_type == 0)
-					that.LightingArea(lShipPos, Math.abs(lYouGuns[lKey].gun_range), "/image/hex_selected_laser.png");
-
-				// plasma
-				if(lYouGuns[lKey].gun_type == 1)
-					that.LightingArea(lShipPos, Math.abs(lYouGuns[lKey].gun_range), "/image/hex_selected_plasma.png");
-			}
-
-			// Where you can go
-			that.LightingArea(lShipPos, 1, "/image/hex_selected.png");
-			var lPrxStatus = $.proxy(battle.GetStatusOfFight, battle);
-			lClockTimer = new ClockTimer();
-			lClockTimer.Start(
-				_response.battle[1].countdown,
-				function (_resp){
-					Starfight.UpdateGUITimer(".bh_doneorder_timer", _resp.clock)
-				}, // Обновление таймера
-				lPrxStatus // Конец хода. // С этого момента запрашивать состояние боя, пока не обновиться ход.
-			);
-			lPlayers = null;
-			lShipPos = null;
-			battle._lastBattleData = _response;
-		})
+		battle.UpdateBattle(_response);
 	});
 
 }

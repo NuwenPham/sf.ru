@@ -18,6 +18,8 @@ if( $status == "" )
 {
 	$json_resp["error"] = "error";
 	$json_resp["message"] = "Such battle is not exist.";
+	$json_resp["pid"] = $pid;
+	$json_resp["battle_id"] = $battle_id;
 	echo json_encode( $json_resp );
 }
 else if( $status == 0 )
