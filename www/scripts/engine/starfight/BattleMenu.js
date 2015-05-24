@@ -85,10 +85,10 @@ function BattleMenu() {
         }
     };
 
-    this.RemoveMenu = function( _starfightInstance ) {
+    this.RemoveMenu = function( _battlefieldInstance ) {
         var a = 0;
         while (a < this.UsingCells.length)
-            _starfightInstance.RemoveCell( this.UsingCells[a++] );
+            _battlefieldInstance.RemoveHex( this.UsingCells[a++] );
     }
 }
 BattleMenu.prototype = new baseClass();

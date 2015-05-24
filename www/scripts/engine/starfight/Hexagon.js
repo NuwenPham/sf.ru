@@ -18,7 +18,7 @@ function Hexagon() {
     this.name = "";
     this.ismouseover = false;
     this.iscanselect = false;
-    this.isfieldcell = false;
+    this.isShowcoords = false;
     this.id = -1;
     this.gun_type = "null";
     this.gun_id = null;

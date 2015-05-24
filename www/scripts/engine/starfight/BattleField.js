@@ -8,6 +8,7 @@ function BattleField(){
     this.HexesCount = 0;
     this.Ships = [];
     this.ShipsCount = 0;
+    this.HexActionsCount = 0;
     this._isVisibleCoords = true;
     this._hexesCoords = [];
     this._battleFeildSize = { horizontal: 20, vertical: 8 };
@@ -54,16 +55,11 @@ function BattleField(){
                     lCurPosX = a * ((lSideLeftRight * 2) + lSideTopBottom + lPadding - lSideLeftRight) + lOffsetX;
                     lCurPosY = b * ((lSideVertical * 2) + lPadding ) + lOffsetY + (a % 2 == 1 ? -(lSideVertical + (lPadding / 2)) : 0);
 
-                    var lPrx = $.proxy(function (_cell){
-                        //this.ActionsForShip(cell)
-                        console.log("hex click callback")
-                    }, this);
-
                     this.AddHex({
                         x: lCurPosX,
                         y: lCurPosY,
                         name: "cell_" + (a * 10 + b),
-                        click: lPrx,
+                        click: _options.onClick ? _options.onClick : undefined,
                         coordinates: {
                             x: a,
                             y: b
@@ -74,10 +70,6 @@ function BattleField(){
             }
             a++;
         }
-    };
-
-    this.withContext = function(_callback){
-        _callback(this);
     };
 
     this.isShipByPlayerId = function( _playerId ){
@@ -133,7 +125,7 @@ function BattleField(){
 
             a++;
         }
-        return false;
+        return null;
     };
 
     this.CornerPointOfHexagoneLocation = function (_x, _y, _radius, _direction_x, _direction_y){
@@ -172,14 +164,14 @@ function BattleField(){
                     lTopHexCoords = this.CornerPointOfHexagoneLocation(lTopHexCoords.x, lTopHexCoords.y, 1, 1, 1);
 
             var id = this.Coords2HexId(lTopHexCoords.x, lTopHexCoords.y);
-            if (id != null)
+            if (id != undefined && id != null)
                 lCells.push(this.Hexes[id]);
 
             // Выборка гексов по вертикали, от угла крайнего верхнего, будет равна радиусу+1
             var b = 1;
             while (b < lVerticalSize) {
                 id = this.Coords2HexId(lTopHexCoords.x, lTopHexCoords.y + b);
-                if (id != null)
+                if (id != undefined && id != null)
                     lCells.push(this.Hexes[id]);
                 b++;
             }
@@ -193,11 +185,36 @@ function BattleField(){
         return lCells;
     };
 
+    this.Distance = function(_hex1, _hex2){
+        var lPreradius = _hex2.x - _hex1.x;
+        var lVectorX = (lPreradius > 0 ? 1 : -1);
+        var lCa, lCb;
+        var lDist;
+
+        if (lPreradius != 0) {
+            // Углы
+            lCa = this.CornerPointOfHexagoneLocation(_hex1.x, _hex1.y, Math.abs(lPreradius), lVectorX, -1);
+            lCb = this.CornerPointOfHexagoneLocation(_hex1.x, _hex1.y, Math.abs(lPreradius), lVectorX, 1);
+
+            if (_hex2.y >= lCa.y && _hex2.y <= lCb.y) // Между углами
+                lDist = Math.abs(_hex2.x - _hex1.x);
+
+            if (_hex2.y < lCa.y) // Выше угла
+                lDist = Math.abs(lCa.y - _hex2.y) + Math.abs(_hex2.x - _hex1.x);
+
+            if (_hex2.y > lCb.y) // Ниже угла
+                lDist = Math.abs(lCb.y - _hex2.y) + Math.abs(_hex2.x - _hex1.x);
+        }
+        else // Если b.x - a.x == 0
+            lDist = Math.abs(_hex1.y - _hex2.y);
+
+        return lDist;
+    };
 
     this.MoveShip = function (player_id, to_coord_x, to_coord_y){
         var that = this;
         var Ship_id = this.getShipIdFromPlayerId(player_id);
-        var position = this.Coords2Pos(to_coord_x, to_coord_y);
+        var position = this.getPosByCoords(to_coord_x, to_coord_y);
 
         var from_x = this.Ships[Ship_id].Sprite.position.x;
         var from_y = this.Ships[Ship_id].Sprite.position.y;
@@ -212,7 +229,6 @@ function BattleField(){
             }
         });
     };
-
 
     this.AddShip = function ( _params ) {
         var lShip, lTexture, lSprite;
@@ -254,6 +270,7 @@ function BattleField(){
         _options.gunParams = _options.gunParams ? _options.gunParams : null;
         _options.x = _options.x ? _options.x : 0;
         _options.y = _options.y ? _options.y : 0;
+        _options.isShowcoords = _options.isShowcoords != undefined ? _options.isShowcoords : true;
 
         lGraphics = new PIXI.Graphics();
         lGraphics.interactive = true;
@@ -318,7 +335,7 @@ function BattleField(){
         };
         lHexCoords = null;
 
-        if(this._isVisibleCoords) {
+        if(this._isVisibleCoords && _options.isShowcoords) {
             lHexCoords = new PIXI.Text(_options.coordinates.x + ":" + _options.coordinates.y, {
                 font: "12px Arial",
                 fill: "rgba(255,255,255,0.8)",
@@ -359,6 +376,7 @@ function BattleField(){
         lHex.id = this.HexesCount;
         lHex.drawedText_coords = lHexCoords;
         lHex.drawedText_shots = lHexShotsCoords;
+        lHex.isShowcoords = _options.isShowcoords;
         lHex.gun_type = _options.gunParams != null ? _options.gunParams[0] : "null";
         lHex.gun_id = _options.gunParams != null ? _options.gunParams[1] : "null";
 
@@ -366,9 +384,12 @@ function BattleField(){
         this.SFCanvas.addChild(lSprite);
 
         // Добавляем текстовые координаты
-        if(this._isVisibleCoords) {
+        if(this._isVisibleCoords && _options.isShowcoords) {
             this.SFCanvas.addChild(lHexCoords);
-            this._hexesCoords.push(lHexCoords);
+            this._hexesCoords.push({
+                hexCoord: lHexCoords,
+                hex_id: this.HexesCount
+            });
         }
 
         if(_options.gunParams != null) {
@@ -386,6 +407,81 @@ function BattleField(){
         return lHex;
     };
 
+    this.AddHexActions = function (_hex_id, _action_type, _func, _object) {
+        var lAction, lHexId;
+
+        lAction = new HexagonActions();
+        lAction.type = _action_type;
+        lAction.func = _func;
+        lAction.isactive = true;
+        lAction.id = this.HexActionsCount;
+        lAction.object = _object;
+        this.HexActionsCount++;
+
+        lHexId = this.getHexRealId(_hex_id);
+        this.Hexes[lHexId].actions.push(lAction);
+    };
+
+    this.HexTexture = function (_hex_id, _path) {
+        var lTexture = PIXI.Texture.fromImage(_path);
+        var lRealId = this.getHexRealId(_hex_id);
+        this.Hexes[lRealId].graphics.Sprite.setTexture(lTexture);
+    };
+
+    this.HexActive = function (_hex_id, _is_active) {
+        var lRealId = this.getHexRealId(_hex_id);
+        this.Hexes[lRealId].iscanselect = _is_active;
+    };
+
+    this.RemoveHex = function (_hex_id){
+        var lRealHexId = this.getHexRealId(_hex_id);
+
+        this.SFCanvas.removeChild(this.Hexes[lRealHexId].graphics.Sprite);
+        this.SFCanvas.removeChild(this.Hexes[lRealHexId].graphics);
+        this.SFCanvas.removeChild(this.Hexes[lRealHexId].drawedText_coords);
+        this.SFCanvas.removeChild(this.Hexes[lRealHexId].drawedText_shots);
+
+        var lTextCoordId = this.getTextHexCoordIdByHexId(lRealHexId);
+        if(lTextCoordId != undefined) {
+            delete this._hexesCoords[lTextCoordId].hex_id;
+            delete this._hexesCoords[lTextCoordId].hexCoord;
+            this._hexesCoords.splice(lTextCoordId, 1);
+        }
+
+        this.Hexes.splice(lRealHexId, 1);
+    };
+
+    this.getHexRealId = function (_hex_id){
+        var a = 0;
+        while (a < this.Hexes.length) {
+            if(this.Hexes[a].id == _hex_id)
+                return a;
+
+            a++;
+        }
+    };
+
+    this.getTextHexCoordIdByHexId = function(_hex_real_id){
+        var a = 0;
+        while (a < this._hexesCoords.length) {
+            if(this._hexesCoords[a].hex_id == _hex_real_id)
+                return a;
+            a++;
+        }
+    };
+
+    // Возвращает позицию координат
+    this.getPosByCoords = function (crdX, crdY){
+        var a = 0;
+        while (a < this.Hexes.length) {
+            if(this.Hexes[a].isShowcoords == true)
+                if(this.Hexes[a].coordinates.x == crdX && this.Hexes[a].coordinates.y == crdY)
+                    return this.Hexes[a].positions;
+
+            a++;
+        }
+    };
+
     this.VisibleCoords = function(_isVisible){
         var a = 0;
 
@@ -396,10 +492,8 @@ function BattleField(){
                 return;
 
             while (a < this._hexesCoords.length)
-                this._hexesCoords[a++].visible = _isVisible;
+                this._hexesCoords[a++].hexCoord.visible = _isVisible;
         }
-    }
-
-
+    };
 }
 BattleField.prototype = new baseClass();

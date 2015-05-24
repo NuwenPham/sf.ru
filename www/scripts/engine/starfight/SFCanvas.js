@@ -45,5 +45,10 @@ function SFCanvas(){
         if(this._renderLibrary == "PIXI")
             this.PIXIStage.addChild(_child);
     };
+
+    this.removeChild = function (_child){
+        if(this._renderLibrary == "PIXI")
+            this.PIXIStage.removeChild(_child);
+    };
 }
 SFCanvas.prototype = new baseClass();

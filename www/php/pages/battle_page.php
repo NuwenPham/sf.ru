@@ -9,8 +9,10 @@
 <script src="scripts/engine/starfight/Ship.js"></script>
 <script src="scripts/engine/starfight/QueueOrder.js"></script>
 <script src="scripts/engine/starfight/BattleMenu.js"></script>
+<script src="scripts/engine/starfight/Battle.js"></script>
 <script src="scripts/engine/api.js"></script>
 <script src="scripts/engine/starfight.js"></script>
+
 
 <script src="scripts/timer.js"></script>
 <script src="scripts/battle_page.js"></script>
